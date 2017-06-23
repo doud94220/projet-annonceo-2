@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Annonceo</title>
-	<link rel="stylesheet" type="text/css" href="/projet-annonceo/inc/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/projet-annonceo-2/inc/css/style.css">
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<!-- Bootstrap -->

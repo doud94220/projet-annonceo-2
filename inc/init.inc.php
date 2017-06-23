@@ -10,8 +10,8 @@ session_start(); //-démarrage d'une session
 $content='';// variable initialisée à vide qui permetta de cotenir tout lesdifférents messages d'alertes,elle sera disponible à tout moment. Pratique pour un affichage global
 
 
-define("RACINE_SITE",$_SERVER['DOCUMENT_ROOT']."/projet-annonceo/"); // chemin physique du site
-define("URL", 'http://localhost/projet-annonceo/');
+define("RACINE_SITE",$_SERVER['DOCUMENT_ROOT']."/projet-annonceo-2/"); // chemin physique du site
+define("URL", 'http://localhost/projet-annonceo-2/');
 
 
 require_once('fonction.inc.php');

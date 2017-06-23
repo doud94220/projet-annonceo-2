@@ -13,41 +13,38 @@
 
 
 		////////////// Gestion du $_FILES (cf. photo(s) uploadée(s)) //////////////
-		if(!empty($_FILES['photo']['name']))
-		{
 
-			$nom_photo = $_FILES['photo']['name'];
-			$url_photo = URL . "photo/$nom_photo";
+		// Pour l'instant je gère que une seule photo (photo 1)
+		if(!empty($_FILES['photo1']['name']))
+		{
+			$nom_photo = $_FILES['photo1']['name'];
+			$url_photo = URL . "photo/$nom_photo";			
 			$url_dossier_photo = RACINE_SITE . "photo/$nom_photo";
 
 			//COPIE LE FICHIER du repertoire tmp vers le repertoire photo de notre projet
-			copy($_FILES['photo']['tmp_name'], $url_dossier_photo);
+			copy($_FILES['photo1']['tmp_name'], $url_dossier_photo);
 		} 
 
 
 		////////////// PAS D'ERREUR => INSERTION EN BDD //////////////
 
+		/// Insertion dans la table "photo"
 
-		/// Insertion dans la table photo
-		// $req_photo=("
-		// 	INSERT INTO photo (photo1, photo2, photo3, photo4 ,photo5)
-		// 	VALUES (:photo1, :photo2, :photo3, :photo4, :photo5)
-		// 		 ");
-		// $statement_photo = $pdo->prepare($req_photo);
-		// $statement_photo->bindValue(':photo1', $_POST['photo1'], PDO::PARAM_STR);
-		// $statement_photo->bindValue(':photo2', $_POST['photo2'], PDO::PARAM_STR);
-		// $statement_photo->bindValue(':photo3', $_POST['photo3'], PDO::PARAM_STR);
-		// $statement_photo->bindValue(':photo4', $_POST['photo4'], PDO::PARAM_STR);
-		// $statement_photo->bindValue(':photo5', $_POST['photo5'], PDO::PARAM_STR);
-		// $response_requete_photo = $statement_photo->execute();
-		// if ($response_requete_photo == false)
-		// {
-		// 	$content += "La requete d insertion dans table photo a echouée";
-		// 	exit();
-		// }
+		$req_photo=("
+			INSERT INTO photo (photo1)
+			VALUES (:photo1)
+				 ");
+		$statement_photo = $pdo->prepare($req_photo);
+		$statement_photo->bindValue(':photo1', $_FILES['photo1']['name'], PDO::PARAM_STR);
+		$response_requete_photo = $statement_photo->execute();
+		if ($response_requete_photo == false)
+		{
+			$content += "La requete d insertion dans la table photo a echouée";
+			exit(); //on quitte la page
+		}
 
-		/// Insertion dans la table annonce
-		// $dernierIndiceInsere = $pdo->lastInsertId(); //recup id de la photo ds table photo
+		/// Insertion dans la table "annonce"
+		$dernierIndiceInsere = $pdo->lastInsertId(); //recup id de la photo ds table photo (enfin j'espere qu'il pioche dans la table photo)
 
 		$req_annonce=("
 			INSERT INTO annonce (titre, description_courte, description_longue, prix, photo, pays, ville, adresse, cp, membre_id, photo_id, categorie_id, date_enregistrement)
@@ -64,7 +61,7 @@
 		$statement_annonce->bindValue(':adresse', $_POST['adresse'], PDO::PARAM_STR);
 		$statement_annonce->bindValue(':cp', $_POST['codePostal'], PDO::PARAM_STR);
 		$statement_annonce->bindValue(':membre_id', 1, PDO::PARAM_STR);
-		$statement_annonce->bindValue(':photo_id', 1, PDO::PARAM_STR);
+		$statement_annonce->bindValue(':photo_id', $dernierIndiceInsere, PDO::PARAM_STR);
 		$statement_annonce->bindValue(':categorie_id', 1, PDO::PARAM_STR);
 		$statement_annonce->bindValue(':date_enregistrement', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 		$statement_annonce->execute();
@@ -137,9 +134,9 @@
 					<label for="categorie">Catégorie : </label><br>
 					<select name="categorie">
 						<option value="">Faites un choix</option>
-						<option value="paris">Vetements</option>
-						<option value="londres">Jouets</option>
-						<option value="madrid">Immobilier</option>
+						<option value="paris">Voiture</option>
+						<option value="londres">Telephone</option>
+						<option value="madrid">Jouet</option>
 					</select><br><br>
 				</div>
 				<div class="col-md-6">
