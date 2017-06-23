@@ -44,7 +44,8 @@
 		}
 
 		/// Insertion dans la table "annonce"
-		$dernierIndiceInsere = $pdo->lastInsertId(); //recup id de la photo ds table photo (enfin j'espere qu'il pioche dans la table photo)
+		$idPhoto = $pdo->lastInsertId(); //recup id de la photo ds table photo (enfin j'espere qu'il pioche dans la table photo)
+		$idMembre = $_SESSION['membre']['id_membre']; //recup id du mmebre dans $_SESSION
 
 		$req_annonce=("
 			INSERT INTO annonce (titre, description_courte, description_longue, prix, photo, pays, ville, adresse, cp, membre_id, photo_id, categorie_id, date_enregistrement)
@@ -60,12 +61,12 @@
 		$statement_annonce->bindValue(':ville', $_POST['ville'], PDO::PARAM_STR);
 		$statement_annonce->bindValue(':adresse', $_POST['adresse'], PDO::PARAM_STR);
 		$statement_annonce->bindValue(':cp', $_POST['codePostal'], PDO::PARAM_STR);
-		$statement_annonce->bindValue(':membre_id', 1, PDO::PARAM_STR);
-		$statement_annonce->bindValue(':photo_id', $dernierIndiceInsere, PDO::PARAM_STR);
-		$statement_annonce->bindValue(':categorie_id', 1, PDO::PARAM_STR);
+		$statement_annonce->bindValue(':membre_id', $idMembre, PDO::PARAM_STR);
+		$statement_annonce->bindValue(':photo_id', $idPhoto, PDO::PARAM_STR);
+		echo"categorie du post : ";debug($_POST['categorie']);
+		$statement_annonce->bindValue(':categorie_id', $_POST['categorie'], PDO::PARAM_STR);
 		$statement_annonce->bindValue(':date_enregistrement', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 		$statement_annonce->execute();
-
 	}
 
 	echo $content;
@@ -133,10 +134,18 @@
 				<div class="col-md-6">
 					<label for="categorie">Catégorie : </label><br>
 					<select name="categorie">
-						<option value="">Faites un choix</option>
-						<option value="paris">Voiture</option>
-						<option value="londres">Telephone</option>
-						<option value="madrid">Jouet</option>
+
+<?php
+	echo '<option value="">Faites un choix</option>';
+	$donnees = $pdo->query("SELECT distinct titre FROM categorie");
+	debug($donnees);
+	while($categorie = $donnees->fetch(PDO::FETCH_ASSOC))
+	{
+		debug($categorie, 2);
+		echo "<option value=" . $categorie['id_categorie'] . ">" . $categorie['titre'] . "</option>";
+	}
+?>
+
 					</select><br><br>
 				</div>
 				<div class="col-md-6">
