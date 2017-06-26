@@ -3,17 +3,18 @@
 	require_once('inc/haut.inc.php');
 
 
+	///////////////////////////// PAGE TERMINEE : Tout marche nikel, aucune valeur en dur, mais je gère que une seule photo /////////////////////////////
+
+
 	///// TRAITEMENT DONNEES DU POST
 	if($_POST)
 	{
 		$url_photo = '';
-
 		////////////// CONTROLES DATA DU POST //////////////
 		// A faire plus tard
 
 
 		////////////// Gestion du $_FILES (cf. photo(s) uploadée(s)) //////////////
-
 		// Pour l'instant je gère que une seule photo (photo 1)
 		if(!empty($_FILES['photo1']['name']))
 		{
@@ -26,10 +27,10 @@
 		} 
 
 
+
 		////////////// PAS D'ERREUR => INSERTION EN BDD //////////////
 
 		/// Insertion dans la table "photo"
-
 		$req_photo=("
 			INSERT INTO photo (photo1)
 			VALUES (:photo1)
@@ -63,7 +64,6 @@
 		$statement_annonce->bindValue(':cp', $_POST['codePostal'], PDO::PARAM_STR);
 		$statement_annonce->bindValue(':membre_id', $idMembre, PDO::PARAM_STR);
 		$statement_annonce->bindValue(':photo_id', $idPhoto, PDO::PARAM_STR);
-		echo"categorie du post : ";debug($_POST['categorie']);
 		$statement_annonce->bindValue(':categorie_id', $_POST['categorie'], PDO::PARAM_STR);
 		$statement_annonce->bindValue(':date_enregistrement', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 		$statement_annonce->execute();
@@ -134,18 +134,14 @@
 				<div class="col-md-6">
 					<label for="categorie">Catégorie : </label><br>
 					<select name="categorie">
-
-<?php
-	echo '<option value="">Faites un choix</option>';
-	$donnees = $pdo->query("SELECT distinct titre FROM categorie");
-	debug($donnees);
-	while($categorie = $donnees->fetch(PDO::FETCH_ASSOC))
-	{
-		debug($categorie, 2);
-		echo "<option value=" . $categorie['id_categorie'] . ">" . $categorie['titre'] . "</option>";
-	}
-?>
-
+						<?php
+							echo '<option value="">Faites un choix</option>';
+							$donnees = $pdo->query("SELECT distinct id_categorie, titre FROM categorie");
+							while($categorie = $donnees->fetch(PDO::FETCH_ASSOC))
+							{
+								echo "<option value=" . $categorie['id_categorie'] . ">" . $categorie['titre'] . "</option>";
+							}
+						?> 
 					</select><br><br>
 				</div>
 				<div class="col-md-6">
