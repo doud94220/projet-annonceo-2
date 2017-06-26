@@ -36,9 +36,9 @@ CREATE TABLE categorie (
 CREATE TABLE annonce (
  	id_annonce INT(3) NOT NULL AUTO_INCREMENT,
   	titre VARCHAR(255) NOT NULL,
-	description_courte VARCHAR(255) NOT NULL,
+	  description_courte VARCHAR(255) NOT NULL,
   	description_longue TEXT,
- 	prix INT (10) NOT NULL,
+ 	  prix INT (10) NOT NULL,
   	photo VARCHAR(200) NOT NULL,
   	pays VARCHAR(20) NOT NULL,
   	ville VARCHAR(20) NOT NULL,
