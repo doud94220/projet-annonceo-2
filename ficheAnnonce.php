@@ -93,8 +93,8 @@
 	?>
 
 	<div id="liensEnBas">
-		<a href="commentaire.php">Déposer un commentaire ou une note</a>
-		<a href="annonces.php">Retour vers les annonces</a>
+		<a href='commentaire.php?id_annonce=<?php echo "$idAnnonce"?>'>Déposer un commentaire ou une note</a>
+		<a href="index.php">Retour vers les annonces</a>
 	</div>
 
 

@@ -17,7 +17,7 @@ CREATE TABLE membre (
 ) ENGINE=InnoDB ;
 
 CREATE TABLE photo (
- 	id_photo INT(3) NOT NULL AUTO_INCREMENT,
+ 	  id_photo INT(3) NOT NULL AUTO_INCREMENT,
   	photo1 VARCHAR(255) NOT NULL,
    	photo2 VARCHAR(255),
     photo3 VARCHAR(255),
@@ -27,14 +27,14 @@ CREATE TABLE photo (
 ) ENGINE=InnoDB ;
 
 CREATE TABLE categorie (
- 	id_categorie INT(3) NOT NULL AUTO_INCREMENT,
+ 	  id_categorie INT(3) NOT NULL AUTO_INCREMENT,
   	titre VARCHAR(255) NOT NULL,
    	motscles TEXT NOT NULL,
   	PRIMARY KEY (id_categorie)
 ) ENGINE=InnoDB ;
 
 CREATE TABLE annonce (
- 	id_annonce INT(3) NOT NULL AUTO_INCREMENT,
+ 	  id_annonce INT(3) NOT NULL AUTO_INCREMENT,
   	titre VARCHAR(255) NOT NULL,
 	  description_courte VARCHAR(255) NOT NULL,
   	description_longue TEXT,
@@ -55,9 +55,10 @@ CREATE TABLE annonce (
 ) ENGINE=InnoDB ;
 
 CREATE TABLE commentaire (
- 	id_commentaire INT(3) NOT NULL AUTO_INCREMENT,
+ 	  id_commentaire INT(3) NOT NULL AUTO_INCREMENT,
   	membre_id INT(3),
    	annonce_id INT(3),
+    commentaire TEXT,
   	date_enregistrement DATETIME,
    	PRIMARY KEY (id_commentaire),
   	CONSTRAINT FK_Id_Membre FOREIGN KEY (membre_id) REFERENCES annonceo.membre(id_membre),
@@ -65,12 +66,12 @@ CREATE TABLE commentaire (
 ) ENGINE=InnoDB ;
 
 CREATE TABLE note (
- 	id_note INT(3) NOT NULL AUTO_INCREMENT,
+ 	  id_note INT(3) NOT NULL AUTO_INCREMENT,
   	membre_id1 INT(3),
    	membre_id2 INT(3),
    	note INT(3) NOT NULL,
    	avis TEXT NOT NULL,
-	date_enregistrement DATETIME,
+	  date_enregistrement DATETIME,
   	PRIMARY KEY (id_note),
   	CONSTRAINT FK_IdMmembre1 FOREIGN KEY (membre_id1) REFERENCES annonceo.membre(id_membre),
   	CONSTRAINT FK_IdMmembre2 FOREIGN KEY (membre_id2) REFERENCES annonceo.membre(id_membre)
