@@ -3,7 +3,7 @@
 	require_once('inc/haut.inc.php');
 
 
-	///////////////////////////// PAGE TERMINEE : Tout marche nikel, aucune valeur en dur, SAUF LE GOOGLE MAP /////////////////////////////
+	///////////////////////////// PAGE TERMINEE : Tout marche nikel, aucune valeur en dur SAUF LE GOOGLE MAP ET LES 2 LIENS EN BAS MARCHENT PAS  /////////////////////////////
 
 
 	if(isset($_GET['id_annonce']))
@@ -25,7 +25,7 @@
 			//On pioche les infos qui vont nous servir dans la page
 			$idAnnonce = $annonceSelectionne['id_annonce'];
 			$urlPhoto = $annonceSelectionne['photo'];
-			$descriptionCourte= $annonceSelectionne['description_courte'];			
+			$titreAnnonce= $annonceSelectionne['titre'];			
 			$descriptionLongue = $annonceSelectionne['description_longue'];
 			$datePublication = $annonceSelectionne['date_enregistrement'];
 			$prix = $annonceSelectionne['prix'];
@@ -45,7 +45,7 @@
 	}
 ?>
 
-	<h1 id="titrePageFicheAnnonce"><?php echo "$descriptionCourte"?></h1>
+	<h1 id="titrePageFicheAnnonce"><?php echo "$titreAnnonce"?></h1>
 
 	<div class="conteneurFlex">
 
@@ -64,13 +64,13 @@
 				$arrayNoteMoyenneVendeur = $resultatNoteMoyenneVendeur->fetch(PDO::FETCH_ASSOC);
 				$noteMoyenneVendeur = $arrayNoteMoyenneVendeur['note_moyenne'];
 
-				//Recup du prénom du vendeur
-				$resultatPrenomVendeur = $pdo->query("SELECT prenom from membre where id_membre = '$idMembre'");
-				$arrayPrenomVendeur = $resultatPrenomVendeur->fetch(PDO::FETCH_ASSOC);
-				$prenomVendeur = $arrayPrenomVendeur['prenom'];
+				//Recup du pseudo du vendeur
+				$resultatPseudoVendeur = $pdo->query("SELECT pseudo from membre where id_membre = '$idMembre'");
+				$arrayPseudoVendeur = $resultatPseudoVendeur->fetch(PDO::FETCH_ASSOC);
+				$pseudoVendeur = $arrayPseudoVendeur['pseudo'];
 			?>
 
-		<li><?php echo "<u>$prenomVendeur</u> : $noteMoyenneVendeur" ?></li>
+		<li><?php echo "<u>$pseudoVendeur</u> : $noteMoyenneVendeur" ?></li>
 		<li><u>€</u>: <?php echo "$prix"?></li>
 		<li><u>Adresse</u> : <?php echo "$adressePostalecomplete"?></li>
 	</ul>

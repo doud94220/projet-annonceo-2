@@ -13,42 +13,43 @@ require_once('inc/haut.inc.php');
 
 				<label for="categorie">Catégorie : </label><br>
 				<select name="categorie">
-					<option value="">Toutes les catégories</option>
-					<option value="emploi">Emploi</option>
-					<option value="véhicule">Véhicule</option>
-					<option value="immobilier">Immobilier</option>
-					<option value="vacances">Vacances</option>
-					<option value="multimedia">Multimedia</option>
-					<option value="loisirs">Loisirs</option>
-					<option value="matériel">Matériel</option>
-					<option value="services">Services</option>
-					<option value="maison">Maison</option>
-					<option value="vetements">Vetements</option>
-					<option value="autres">Autres</option>
-				</select><br><br>
+						<?php
+							echo '<option value="">Faites un choix</option>';
+							$donnees = $pdo->query("SELECT distinct id_categorie, titre FROM categorie");
+							while($categorie = $donnees->fetch(PDO::FETCH_ASSOC))
+							{
+								echo "<option value=" . $categorie['id_categorie'] . ">" . $categorie['titre'] . "</option>";
+							}
+						?> 
+					</select><br><br>
 
 				<label for="region">Région : </label><br>
 				<select name="region">
 					<option value="">Toutes les régions</option>
-					<option value="emploi">Ile-De-France</option>
-					<option value="véhicule">Pays de la loire</option>
-					<option value="immobilier">Bretagne</option>
+					<option value="ile-de-france">Ile-De-France</option>
+					<option value="pays-de-la-loire">Pays de la loire</option>
+					<option value="bretagne">Bretagne</option>
 				</select><br><br>
 
 				<label for="membre">Membre : </label><br>
 				<select name="membre">
-					<option value="">Tous les membres</option>
-					<option value="emploi">dugnou49</option>
-					<option value="véhicule">dupont75</option>
-					<option value="immobilier">tartanpion92</option>
+						<?php
+							echo '<option value="">Faites un choix</option>';
+							$donnees = $pdo->query("SELECT id_membre, pseudo FROM membre");
+							while($categorie = $donnees->fetch(PDO::FETCH_ASSOC))
+							{
+								echo "<option value=" . $categorie['id_membre'] . ">" . $categorie['pseudo'] . "</option>";
+							}
+						?> 
 				</select><br><br>
 
-				<label for="prix">Prix : </label><br>
+				<label for="prix">Votre prix max : </label><br>
 				<input type="text" name="prix"><br><br>
 
 				<input type="submit" value="Valider"><br><br>
 			</form>
 		</div> <!-- Fin formGauchePageAccueil -->
+
 
 		<div id="partiePrincipalePageAccueil">
 			<!-- FORMULAIRE TRIE PRIX PAGE D'ACCUEIL -->
@@ -66,45 +67,72 @@ require_once('inc/haut.inc.php');
 
 			</form><br><br>
 
-			<div id="produitsPageAccueil">
-				<table>
-					<tr>
-						<td><img src="inc/img/polo-blanche.jpg" width='100px' height='80px'></td>
-						<td>
-							<p><a href="ficheAnnonce.php?aaaaaaaa">Nom Produit1</a></p>
-							<p>Description Produit1</p>
-							<p>Dernier avis du produit1</p>
-						</td>
-						<td>
-							<p>Prix</p>
-						</td>
-					</tr>
-					<tr>
-						<td><img src="inc/img/polo-blanche.jpg" width='100px' height='80px'></td>
-						<td>
-							<p><a href="ficheAnnonce.php?bbbbbbbb">Nom Produit2</a></p>
-							<p>Description Produit2</p>
-							<p>Dernier avis du produit2</p>
-						</td>
-						<td>
-							<p>Prix</p>
-						</td>
-					</tr>
-					<tr>
-						<td><img src="inc/img/polo-blanche.jpg" width='100px' height='80px'></td>
-						<td>
-							<p><a href="ficheAnnonce.php?ccccccccc">Nom Produit3</a></p>
-							<p>Description Produit3</p>
-							<p>Dernier avis du produit3</p>
-						</td>
-						<td>
-							<p>Prix</p> 
-						</td>
-					</tr>
-				</table>
-			</div>
+			<?php
+				if($_POST) //Validation des data du premier form
+				{
+					////////////// CONTROLES DATA DU POST //////////////
+					// A faire plus tard
+
+					////////////// PAS D'ERREUR => SELECTION EN BDD //////////////     //Je gère pas la région pour l'instant !!! Et je prends que 3 résultats max pour l'instant !!!
+					$idCategorie = $_POST['categorie'];
+					$idMembre = $_POST['membre'];
+					$prix = $_POST['prix'];
+					$resultat = $pdo->query("SELECT * FROM annonce WHERE categorie_id = '$idCategorie' AND membre_id = '$idMembre' AND prix <= '$prix' LIMIT 3");
+
+					if ($resultat->rowCount() <= 0) //Si pas de ligne retournée par requête ci-dessus
+					{
+						echo "Pas de résultats pour vos critères.";
+					}
+					else //Afficher les annonces dans un tableau dans la partie de droite de la page
+					{
+						echo"<div id='produitsPageAccueil'>
+								<table>
+							";
+
+						while ($annonces = $resultat->fetch(PDO::FETCH_ASSOC))
+						{
+							$urlPhoto = $annonces['photo'];
+							$titre = $annonces['titre'];
+							$idAnnonce =  $annonces['id_annonce'];
+							$descriptionCourte = $annonces['description_courte'];
+							$prix = $annonces['prix'];
+							$idMembre = $annonces['membre_id'];
+
+							//Recup du pseudo du vendeur
+							$resultatPseudoVendeur = $pdo->query("SELECT pseudo from membre where id_membre = '$idMembre'");
+							$arrayPseudoVendeur = $resultatPseudoVendeur->fetch(PDO::FETCH_ASSOC);
+							$pseudoVendeur = $arrayPseudoVendeur['pseudo'];
+
+							//Recup de la note moyenne du vendeur de l'annonce
+							$resultatNoteMoyenneVendeur = $pdo->query("SELECT round(AVG(note),1) AS note_moyenne from note where membre_id2 = '$idMembre'");
+							$arrayNoteMoyenneVendeur = $resultatNoteMoyenneVendeur->fetch(PDO::FETCH_ASSOC);
+							$noteMoyenneVendeur = $arrayNoteMoyenneVendeur['note_moyenne'];
+
+							echo"
+									<tr>
+										<td><img src='" . $urlPhoto . "' width='100px' height='80px'></td>
+										<td>
+											<p><a href='ficheAnnonce.php?id_annonce=" . $idAnnonce . "'>" . $titre . "</a></p>
+											<p>" . $descriptionCourte . "</p>
+											<p>" . $pseudoVendeur . " : " . $noteMoyenneVendeur . "</p>
+										</td>
+										<td>
+											<p>" . $prix . "€ </p>
+										</td>
+									</tr>
+							 	";
+						}
+						echo"	</table>
+							</div>
+							";
+					}
+				} //Fin du traitement des date du POST
+			?>
+		
+
 		</div> <!-- Fin partiePrincipalePageAccueil -->
-	</div> <!-- Fin conteneurFlexPageAccueil" -->
+
+	</div> <!-- Fin conteneurFlex" -->
 
 
 <?php
