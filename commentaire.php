@@ -11,7 +11,7 @@
 		echo"
 			<h1>Vous êtes en train de déposer un commentaire et/ou une note</h1>
 
-			<form method='post' action=''>
+			<form method='post' action='commentaire.php'>
 
 				<input type='hidden' name='verifFormCommentEtNote'>
 				<input type='hidden' name='id_annonce' value=$_GET[id_annonce]>
@@ -48,17 +48,21 @@
 					 ");
 			$idMembre = $_SESSION['membre']['id_membre']; //recup id du mmebre dans $_SESSION
 			$idAnnonce = $_POST['id_annonce'];
+
 			$statement_commentaire = $pdo->prepare($req_commentaire);
 			$statement_commentaire->bindValue(':membre_id', $idMembre, PDO::PARAM_STR);
 			$statement_commentaire->bindValue(':annonce_id', $idAnnonce, PDO::PARAM_STR);
 			$statement_commentaire->bindValue(':commentaire', $_POST['commentaire'], PDO::PARAM_STR);
-			$statement_commentaire->bindValue(':date_enregistrement', date('DD/MM/YYYY'), PDO::PARAM_STR);		
+			$statement_commentaire->bindValue(':date_enregistrement', date('Y-m-d H:i:s'), PDO::PARAM_STR);		
 			$response_requete_commentaire = $statement_commentaire->execute();
-			$content += "<div class='alert alert-success'>Commentaire inséré</div>";
 
 			if ($response_requete_commentaire == false)
 			{
-				$content += "<div class='alert alert-danger'>La requete d insertion dans la table commentaire a echouée...</div>";
+				$content += "<div class='alert alert-danger'>L insertion du commentaire a echoué...</div>";
+			}
+			else
+			{
+				$content += "<div class='alert alert-success'>Commentaire inséré</div>";
 			}
 		}
 
@@ -68,23 +72,38 @@
 					INSERT INTO note(membre_id1, membre_id2, note, avis, date_enregistrement) 
 					VALUES (:membre_id1, :membre_id2, :note, :avis, :date_enregistrement)
 					 ");
+
+			//Recup de presque toutes les infos pour la requete	
 			$idMembreQuiNote = $_SESSION['membre']['id_membre'];
 			$idAnnonce = $_POST['id_annonce'];
 			$note =  $_POST['note'];
-			$avis =  $_POST['avis'];		
-			$statement_note = $pdo->prepare($req_note);
-			//bind
-			//execute
-			$content += "<div class='alert alert-success'>Note et avis insérés</div>";
+			$avis =  $_POST['avis'];
 
-			if ($response_requete_commentaire == false)
+			//Recup id vendeur à partir de id annonce
+			$resultatIdVendeur = $pdo->query("SELECT membre_id from annonce where id_annonce = '$idAnnonce'");
+			$arrayIdVendeur = $resultatIdVendeur->fetch(PDO::FETCH_ASSOC);
+			$idVendeur = $arrayIdVendeur['membre_id'];
+
+			$statement_note = $pdo->prepare($req_note);
+			$statement_note->bindValue(':membre_id1', $idMembreQuiNote, PDO::PARAM_STR);
+			$statement_note->bindValue(':membre_id2', $idVendeur, PDO::PARAM_STR);
+			$statement_note->bindValue(':note', $note, PDO::PARAM_STR);
+			$statement_note->bindValue(':avis', $avis, PDO::PARAM_STR);
+			$statement_note->bindValue(':date_enregistrement', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+			$response_statement_note = $statement_note->execute();
+
+			if ($response_statement_note == false)
 			{
-				$content += "<div class='alert alert-danger'>La requete d insertion dans la table note a echouée...</div>";
+				$content += "<div class='alert alert-danger'>L insertion de la note a echoué...</div>";
+			}
+			else
+			{
+				$content += "<div class='alert alert-success'>Note et avis insérés</div>";
 			}
 		}
 	}
 
-	else
+	else //probleme, ni get ni post
 	{
 		$content += "<div class='alert alert-danger'>Ni get ni post.....</div>";
 		//header('location:index.php');
